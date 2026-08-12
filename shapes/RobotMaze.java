@@ -393,4 +393,77 @@ public class RobotMaze
     public boolean isStarted(){
         return started;
     }
+    
+    /**
+     * Calcula la distancia Manhattan entre dos posiciones.
+     *
+     * @param x1 coordenada x de la primera posición.
+     * @param y1 coordenada y de la primera posición.
+     * @param x2 coordenada x de la segunda posición.
+     * @param y2 coordenada y de la segunda posición.
+     * @return distancia Manhattan entre las dos posiciones.
+     */
+    private int manhattanDistance(int x1, int y1, int x2, int y2)
+    {
+        return Math.abs(x1 - x2) + Math.abs(y1 - y2);
+    }
+    
+    /**
+     * Realiza el mejor movimiento posible utilizando una estrategia Greedy.
+     *
+     * La máquina evalúa las cuatro direcciones posibles y selecciona
+     * el movimiento válido que minimiza la distancia Manhattan entre
+     * la posición resultante del robot y la salida.
+     *
+     * Si ninguna dirección es válida, el robot permanece en su posición.
+     */
+    public void goodMove(){
+        int[] pos = robot.coordinates();
+        int currentX = pos[0];
+        int currentY = pos[1]; 
+        char bestDirection = robot.direction();
+        int bestDistance = Integer.MAX_VALUE;   
+    
+        int newX = currentX;
+        int newY = currentY - 1;
+        if (inside(newX, newY) && !hasWall(currentX, currentY, newX, newY)){
+           int distance = manhattanDistance(newX, newY, exitX, exitY);
+           if (distance < bestDistance){
+                bestDistance = distance;
+                bestDirection = 'N';
+            }
+        }
+        newX = currentX;
+        newY = currentY + 1;
+        if (inside(newX, newY) && !hasWall(currentX, currentY, newX, newY)){
+           int distance = manhattanDistance(newX, newY, exitX, exitY);
+           if (distance < bestDistance){
+                bestDistance = distance;
+                bestDirection = 'S';
+            }
+        }
+        newX = currentX+1;
+        newY = currentY;
+        if (inside(newX, newY) && !hasWall(currentX, currentY, newX, newY)){
+           int distance = manhattanDistance(newX, newY, exitX, exitY);
+           if (distance < bestDistance){
+                bestDistance = distance;
+                bestDirection = 'E';
+            }
+        }
+        newX = currentX-1;
+        newY = currentY;
+        if (inside(newX, newY) && !hasWall(currentX, currentY, newX, newY)){
+           int distance = manhattanDistance(newX, newY, exitX, exitY);
+           if (distance < bestDistance){
+                bestDistance = distance;
+                bestDirection = 'W';
+            }
+        }
+        
+        if (bestDistance != Integer.MAX_VALUE) {
+            turn(bestDirection);
+            move(1);
+        }
+    } 
 }
