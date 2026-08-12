@@ -32,5 +32,5 @@ Primer laboratorio de la asignatura. Se desarrolla un sistema basado en programa
 
 ## 👨‍💻 Autores
 
-**Juan David**
-**Cesar Morales**
+- **Juan David**
+- **Cesar Morales**
