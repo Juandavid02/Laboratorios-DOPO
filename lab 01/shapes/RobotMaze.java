@@ -12,6 +12,7 @@
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Stack;
 import java.util.Random;
 
 public class RobotMaze
@@ -31,7 +32,9 @@ public class RobotMaze
     private int entryFace;
     private int exitFace;
     // IA generativa me recomendó el uso de List para almacenar las paredes.
-    private List<Wall> walls; 
+    private List<Wall> walls;
+    
+    private Stack<RobotState> history;
     
     /**
      * Crea un nuevo laberinto con el tamaño especificado.
@@ -52,6 +55,7 @@ public class RobotMaze
         lives = 10;
         started = false;
         walls = new ArrayList<Wall>();
+        history = new Stack<RobotState>();
         Random random = new Random();
         entryFace = random.nextInt(4);
         int position;
@@ -272,15 +276,21 @@ public class RobotMaze
      * en sentido contrario.
      */
     public void move(int step){
+        int[] oldPosition = robot.coordinates();
+        int oldX = oldPosition[0];
+        int oldY = oldPosition[1];
+        char oldDirection = robot.direction();
+        
         int directionStep = 1;
         if (step < 0) {
             directionStep = -1;
             step = -step;
         }
+        
         int[] pos = robot.coordinates();
         int currentX = pos[0];
         int currentY = pos[1];
-         int validSteps = 0;
+        int validSteps = 0;
         boolean crashed = false;
         
         for (int i = 0; i < step; i++) {
@@ -309,6 +319,7 @@ public class RobotMaze
             validSteps++;
         }
         if (validSteps > 0) {
+            history.push(new RobotState(oldX, oldY, oldDirection));
             robot.move(directionStep * validSteps);
         }
         if (crashed) {
@@ -465,5 +476,25 @@ public class RobotMaze
             turn(bestDirection);
             move(1);
         }
-    } 
+    }
+        
+    /**
+     * Deshace el último movimiento realizado por el robot.
+     *
+     * Recupera la posición y dirección anteriores almacenadas
+     * en el historial. El uso de este método no consume vidas.
+     *
+     * Si no existe ningún movimiento anterior, el robot
+     * permanece en su posición actual.
+     */
+    public void undo(){
+        if (!history.empty()) {
+            RobotState previous = history.pop();
+            robot.setPosition(previous.getX(),previous.getY());
+            robot.turn(previous.getDirection());
+            robot.setOK(true);
+        }
+    }
+    
+    
 }
