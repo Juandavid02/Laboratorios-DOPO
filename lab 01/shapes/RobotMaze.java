@@ -33,7 +33,6 @@ public class RobotMaze
     private int exitFace;
     // IA generativa me recomendó el uso de List para almacenar las paredes.
     private List<Wall> walls;
-    
     private Stack<RobotState> history;
     
     /**
